@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  sql-server:
+       container_name: authenticationDB
+       image: mcr.microsoft.com/mssql/server:2022-latest
+       ports:
+          - "1433:1433"
+       environment: 
+          - ACCEPT_EULA=Y
+          - SA_PASSWORD=password@2023
+  authentication:
+      container_name: authentication
+      image: ${DOCKER_REGISTRY-}authentication
+      build:
+        context: .
+        dockerfile: Authentication/Dockerfile
+      depends_on: 
+        - sql-server
+      environment: 
+        - DB_HOST=AuthenticationDB
+        - DB_NAME=AuthenticationDB
+        - DB_SA_PASSWORD=password@2023
